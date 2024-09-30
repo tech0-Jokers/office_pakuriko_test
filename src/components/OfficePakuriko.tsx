@@ -40,7 +40,7 @@ export default function OfficePakuriko() {
   };
 
   return (
-    <div className="max-w-md w-full mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div className="max-w-md w-full mx-auto p-6 bg-white rounded-lg shadow-md text-purple-500">
       <h1 className="text-2xl font-bold mb-6 text-center">OfficePakuriko</h1>
 
       <button
