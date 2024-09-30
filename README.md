@@ -1,0 +1,2 @@
+# office_pakuriko_test
+office_pakurikoのテスト用のリポジトリ
