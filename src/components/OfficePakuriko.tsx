@@ -14,14 +14,18 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+// メインコンポーネント
 export default function OfficePakuriko() {
-  const [request, setRequest] = useState("");
-  const [favSnack, setFavSnack] = useState("");
-  const [showThankYou, setShowThankYou] = useState(false);
-  const [likeMessage, setLikeMessage] = useState("");
+  // useStateを使って状態変数を定義（型定義も追加）
+  const [request, setRequest] = useState<string>(""); // 要望・意見の入力内容
+  const [favSnack, setFavSnack] = useState<string>(""); // 気に入ったお菓子の名前
+  const [showThankYou, setShowThankYou] = useState<boolean>(false); // 「ありがとうございます」ダイアログの表示状態
+  const [likeMessage, setLikeMessage] = useState<string>(""); // いいねのメッセージ表示
 
+  // 「いいね！」ボタンが押されたときの処理
   const handleLike = async () => {
     try {
+      // APIにリクエストを送信
       const response = await fetch("/api/notify-slack", {
         method: "POST",
         headers: {
@@ -29,18 +33,24 @@ export default function OfficePakuriko() {
         },
         body: JSON.stringify({ type: "like" }),
       });
+
+      // レスポンスが失敗した場合はエラーを投げる
       if (!response.ok) throw new Error("Failed to send like notification");
+
+      // 成功したらメッセージを表示
       setLikeMessage("いいね！を送信しました！");
       setTimeout(() => setLikeMessage(""), 3000); // 3秒後にメッセージを消す
     } catch (error) {
       console.error("Error sending like notification:", error);
       setLikeMessage("送信に失敗しました。");
-      setTimeout(() => setLikeMessage(""), 3000);
+      setTimeout(() => setLikeMessage(""), 3000); // 3秒後にメッセージを消す
     }
   };
 
+  // フォームの送信ボタンが押されたときの処理
   const handleSubmit = async () => {
     try {
+      // APIにリクエストを送信
       const response = await fetch("/api/notify-slack", {
         method: "POST",
         headers: {
@@ -48,7 +58,11 @@ export default function OfficePakuriko() {
         },
         body: JSON.stringify({ type: "submit", request, favSnack }),
       });
+
+      // レスポンスが失敗した場合はエラーを投げる
       if (!response.ok) throw new Error("Failed to send submission");
+
+      // 送信が成功した場合、フォームをリセットし、「ありがとうございます」ダイアログを表示
       setRequest("");
       setFavSnack("");
       setShowThankYou(true);
@@ -59,9 +73,12 @@ export default function OfficePakuriko() {
 
   return (
     <div className="max-w-md w-full mx-auto p-6 bg-white rounded-lg shadow-md">
+      {/* タイトル */}
       <h1 className="text-2xl font-bold mb-6 text-center text-purple-600">
         OfficePakuriko
       </h1>
+
+      {/* 説明文 */}
       <p className="text-center text-gray-600 mb-4">
         オフィスでのコミュニケーションを活性化するためのプロジェクトです。
         <br />
@@ -70,6 +87,7 @@ export default function OfficePakuriko() {
         ぜひ、あなたの意見をお聞かせください！
       </p>
 
+      {/* 実証実験の目的ダイアログ */}
       <Dialog>
         <DialogTrigger asChild>
           <Button
@@ -104,12 +122,15 @@ export default function OfficePakuriko() {
         </DialogContent>
       </Dialog>
 
+      {/* 「いいね！」ボタン */}
       <Button
         onClick={handleLike}
         className="w-full mb-4 flex items-center justify-center"
       >
         <ThumbsUp className="mr-2 h-4 w-4" /> いいね！
       </Button>
+
+      {/* いいねメッセージの表示 */}
       {likeMessage && (
         <p
           className="text-center text-green-600 mb-4"
@@ -120,6 +141,7 @@ export default function OfficePakuriko() {
         </p>
       )}
 
+      {/* フォーム：要望や意見を入力するテキストエリア */}
       <Textarea
         placeholder="要望や意見を聞かせてください"
         value={request}
@@ -127,6 +149,7 @@ export default function OfficePakuriko() {
         className="mb-4"
       />
 
+      {/* フォーム：気に入ったお菓子の名前を入力するインプット */}
       <Input
         type="text"
         placeholder="気に入ったお菓子の名前を教えてください"
@@ -135,14 +158,16 @@ export default function OfficePakuriko() {
         className="mb-4"
       />
 
+      {/* 送信ボタン */}
       <Button
         onClick={handleSubmit}
-        disabled={!request && !favSnack}
+        disabled={!request && !favSnack} // どちらも未入力の場合はボタンを無効化
         className="w-full"
       >
         送信
       </Button>
 
+      {/* 「ありがとうございます」ダイアログ */}
       <Dialog open={showThankYou} onOpenChange={setShowThankYou}>
         <DialogContent>
           <DialogHeader>
