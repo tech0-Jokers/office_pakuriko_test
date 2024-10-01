@@ -1,11 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { ThumbsUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ThumbsUp, Info } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function OfficePakuriko() {
   const [request, setRequest] = useState("");
   const [favSnack, setFavSnack] = useState("");
+  const [showThankYou, setShowThankYou] = useState(false);
+  const [likeMessage, setLikeMessage] = useState("");
 
   const handleLike = async () => {
     try {
@@ -17,8 +30,12 @@ export default function OfficePakuriko() {
         body: JSON.stringify({ type: "like" }),
       });
       if (!response.ok) throw new Error("Failed to send like notification");
+      setLikeMessage("いいね！を送信しました！");
+      setTimeout(() => setLikeMessage(""), 3000); // 3秒後にメッセージを消す
     } catch (error) {
       console.error("Error sending like notification:", error);
+      setLikeMessage("送信に失敗しました。");
+      setTimeout(() => setLikeMessage(""), 3000);
     }
   };
 
@@ -34,44 +51,110 @@ export default function OfficePakuriko() {
       if (!response.ok) throw new Error("Failed to send submission");
       setRequest("");
       setFavSnack("");
+      setShowThankYou(true);
     } catch (error) {
       console.error("Error sending submission:", error);
     }
   };
 
   return (
-    <div className="max-w-md w-full mx-auto p-6 bg-white rounded-lg shadow-md text-purple-500">
-      <h1 className="text-2xl font-bold mb-6 text-center">OfficePakuriko</h1>
+    <div className="max-w-md w-full mx-auto p-6 bg-white rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold mb-6 text-center text-purple-600">
+        OfficePakuriko
+      </h1>
+      <p className="text-center text-gray-600 mb-4">
+        オフィスでのコミュニケーションを活性化するためのプロジェクトです。
+        <br />
+        ここにあるお菓子はご自由に食べて頂いて構いません。
+        <br />
+        ぜひ、あなたの意見をお聞かせください！
+      </p>
 
-      <button
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            className="w-full mb-4 flex items-center justify-center"
+          >
+            <Info className="mr-2 h-4 w-4" /> 実証実験の目的
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>OfficePakurikoプロジェクトの目的</DialogTitle>
+            <DialogDescription>
+              オフィスでのコミュニケーションを活性化することを目的としています。
+              <br />
+              実証実験では、以下の仮説検証を行っています。
+              <br />
+              １）どんなお菓子が喜ばれるのか
+              <br />
+              ２）どんなお菓子だとコミュニケーションが活性化するのか
+              <br />
+              ３）お菓子に支払える金額はどれくらいか
+              <br />
+              ４）どんな仕組みだと、上記が達成しやすくなるのか
+              <br />
+              <br />
+              上記の検証のために、可能であれば購入意思の金額を投入してもらえると大変助かります。
+              <br />
+              あなたの意見が、より楽しいオフィスライフの創造に貢献します！
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
+      <Button
         onClick={handleLike}
-        className="w-full mb-4 flex items-center justify-center bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+        className="w-full mb-4 flex items-center justify-center"
       >
         <ThumbsUp className="mr-2 h-4 w-4" /> いいね！
-      </button>
+      </Button>
+      {likeMessage && (
+        <p
+          className="text-center text-green-600 mb-4"
+          role="status"
+          aria-live="polite"
+        >
+          {likeMessage}
+        </p>
+      )}
 
-      <textarea
-        placeholder="要望を入力してください"
+      <Textarea
+        placeholder="要望や意見を聞かせてください"
         value={request}
         onChange={(e) => setRequest(e.target.value)}
-        className="w-full mb-4 p-2 border border-gray-300 rounded"
+        className="mb-4"
       />
 
-      <input
+      <Input
         type="text"
-        placeholder="気に入ったお菓子の名前"
+        placeholder="気に入ったお菓子の名前を教えてください"
         value={favSnack}
         onChange={(e) => setFavSnack(e.target.value)}
-        className="w-full mb-4 p-2 border border-gray-300 rounded"
+        className="mb-4"
       />
 
-      <button
+      <Button
         onClick={handleSubmit}
         disabled={!request && !favSnack}
-        className="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+        className="w-full"
       >
         送信
-      </button>
+      </Button>
+
+      <Dialog open={showThankYou} onOpenChange={setShowThankYou}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>ありがとうございます！</DialogTitle>
+            <DialogDescription>
+              コメントありがとうございます！嬉しいです！
+              あなたの意見は、より良いオフィス環境づくりに役立ちます。
+            </DialogDescription>
+          </DialogHeader>
+          <Button onClick={() => setShowThankYou(false)}>閉じる</Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

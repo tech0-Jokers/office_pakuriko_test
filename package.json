@@ -7,9 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "shadcn-ui": "shadcn-ui"
+    "shadcn-ui": "shadcn-ui",
+    "shadcn": "shadcn-ui",
+    "shadcn-add": "shadcn-ui add"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-slot": "^1.1.0",
     "@slack/web-api": "^7.5.0",
     "autoprefixer": "^10.4.20",
@@ -19,7 +22,8 @@
     "next": "14.2.13",
     "react": "^18",
     "react-dom": "^18",
-    "tailwind-merge": "^2.5.2"
+    "tailwind-merge": "^2.5.2",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@shadcn/ui": "^0.0.4",
